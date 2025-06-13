@@ -1,0 +1,76 @@
+### Get all notes
+GET http://localhost:3000/note
+Accept: application/json
+
+###
+
+### Get a note by title (query param)
+GET http://localhost:3000/note?title=Sample Note
+Accept: application/json
+
+###
+
+### Get a note by ID (valid)
+GET http://localhost:3000/note/123e4567-e89b-12d3-a456-426614174000
+Accept: application/json
+
+###
+
+### Get a note by ID (invalid)
+GET http://localhost:3000/note/invalid-id
+Accept: application/json
+
+###
+
+### Create a new note
+POST http://localhost:3000/note/create
+Content-Type: application/json
+
+{
+  "title": "Sample Note",
+  "content": "This is a test note."
+}
+
+###
+
+### Create note with missing field (invalid)
+POST http://localhost:3000/note/create
+Content-Type: application/json
+
+{
+  "title": "Incomplete Note"
+}
+
+###
+
+### Update a note (valid ID)
+PATCH http://localhost:3000/note/update/5adf66f7-9f80-4f0a-b703-d6c3d48b2d45
+Content-Type: application/json
+
+{
+  "title": "Updated Note",
+  "content": "Updated content of the note."
+}
+
+###
+
+### Update a note (invalid ID)
+PATCH http://localhost:3000/note/update/non-existent-id
+Content-Type: application/json
+
+{
+  "title": "Should Fail",
+  "content": "This should not succeed."
+}
+
+###
+
+### Delete a note by ID (valid)
+DELETE http://localhost:3000/note/123e4567-e89b-12d3-a456-426614174000
+Accept: application/json
+
+###
+
+### Delete a note by ID (invalid)
+DELETE http://localhost:3000/note/non-existent-id
+Accept: application/json
