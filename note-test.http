@@ -1,76 +1,431 @@
+### Health Check
+GET http://localhost:3000/api
+Accept: application/json
+
+###
+
 ### Get all notes
-GET http://localhost:3000/note
+GET http://localhost:3000/api/notes
 Accept: application/json
 
 ###
 
-### Get a note by title (query param)
-GET http://localhost:3000/note?title=Sample Note
+### Get total notes count
+GET http://localhost:3000/api/notes/count
 Accept: application/json
 
 ###
 
-### Get a note by ID (valid)
-GET http://localhost:3000/note/123e4567-e89b-12d3-a456-426614174000
+### Get recent notes (default limit)
+GET http://localhost:3000/api/notes/recent
 Accept: application/json
 
 ###
 
-### Get a note by ID (invalid)
-GET http://localhost:3000/note/invalid-id
+### Get recent notes (custom limit)
+GET http://localhost:3000/api/notes/recent?limit=3
 Accept: application/json
 
 ###
 
-### Create a new note
-POST http://localhost:3000/note/create
+### Search notes (general search)
+GET http://localhost:3000/api/notes/search?q=test
+Accept: application/json
+
+###
+
+### Search notes (empty query - should return all)
+GET http://localhost:3000/api/notes/search?q=
+Accept: application/json
+
+###
+
+### Search notes (no matches)
+GET http://localhost:3000/api/notes/search?q=nonexistentterm123
+Accept: application/json
+
+###
+
+### Get notes by exact title
+GET http://localhost:3000/api/notes/by-title?title=Sample Note
+Accept: application/json
+
+###
+
+### Get notes by date range
+GET http://localhost:3000/api/notes/date-range?startDate=2025-01-01&endDate=2025-12-31
+Accept: application/json
+
+###
+
+### Get notes by date range (narrow range)
+GET http://localhost:3000/api/notes/date-range?startDate=2025-06-01&endDate=2025-06-30
+Accept: application/json
+
+###
+
+### Create a new note (valid)
+POST http://localhost:3000/api/notes
 Content-Type: application/json
 
 {
-  "title": "Sample Note",
-  "content": "This is a test note."
+  "title": "My First Note",
+  "content": "This is the content of my first note. It contains some useful information."
 }
 
 ###
 
-### Create note with missing field (invalid)
-POST http://localhost:3000/note/create
+### Create another note for testing
+POST http://localhost:3000/api/notes
 Content-Type: application/json
 
 {
-  "title": "Incomplete Note"
+  "title": "Meeting Notes",
+  "content": "Discussion about project timeline and deliverables. Action items: 1. Review requirements 2. Schedule follow-up"
 }
 
 ###
 
-### Update a note (valid ID)
-PATCH http://localhost:3000/note/update/5adf66f7-9f80-4f0a-b703-d6c3d48b2d45
+### Create a third note for testing
+POST http://localhost:3000/api/notes
 Content-Type: application/json
 
 {
-  "title": "Updated Note",
-  "content": "Updated content of the note."
+  "title": "Shopping List",
+  "content": "Groceries needed: milk, bread, eggs, apples, chicken"
 }
 
 ###
 
-### Update a note (invalid ID)
-PATCH http://localhost:3000/note/update/non-existent-id
+### Create note with minimum valid data
+POST http://localhost:3000/api/notes
 Content-Type: application/json
 
 {
-  "title": "Should Fail",
-  "content": "This should not succeed."
+  "title": "A",
+  "content": "B"
 }
 
 ###
 
-### Delete a note by ID (valid)
-DELETE http://localhost:3000/note/123e4567-e89b-12d3-a456-426614174000
+### Create note with missing title (should fail)
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "content": "This note has no title and should fail validation."
+}
+
+###
+
+### Create note with missing content (should fail)
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "title": "Title Only"
+}
+
+###
+
+### Create note with empty title (should fail)
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "title": "",
+  "content": "This note has an empty title."
+}
+
+###
+
+### Create note with empty content (should fail)
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "title": "Empty Content",
+  "content": ""
+}
+
+###
+
+### Create note with title too long (should fail)
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "title": "This is a very long title that exceeds the maximum allowed length of 255 characters. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "content": "Content here"
+}
+
+###
+
+### Create note with extra fields (should be filtered out)
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "title": "Note with Extra Fields",
+  "content": "This note has extra fields that should be filtered out.",
+  "extraField": "This should not be saved",
+  "maliciousField": "This should also be filtered"
+}
+
+###
+
+### Get note by ID (replace with actual ID from previous create)
+# Note: Replace the UUID below with an actual ID from a created note
+GET http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
 Accept: application/json
 
 ###
 
-### Delete a note by ID (invalid)
-DELETE http://localhost:3000/note/non-existent-id
+### Get note by invalid ID format (should fail)
+GET http://localhost:3000/api/notes/invalid-uuid-format
+Accept: application/json
+
+###
+
+### Get note by non-existent valid UUID (should return 404)
+GET http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440001
+Accept: application/json
+
+###
+
+### Update note (replace with actual ID)
+# Note: Replace the UUID below with an actual ID from a created note
+PATCH http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "content": "This note has been updated with new content."
+}
+
+###
+
+### Update note (only title)
+# Note: Replace the UUID below with an actual ID from a created note
+PATCH http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{
+  "title": "Only Title Updated"
+}
+
+###
+
+### Update note (only content)
+# Note: Replace the UUID below with an actual ID from a created note
+PATCH http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{
+  "content": "Only content has been updated in this request."
+}
+
+###
+
+### Update note with empty body (should return unchanged note)
+# Note: Replace the UUID below with an actual ID from a created note
+PATCH http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{}
+
+###
+
+### Update note with invalid title (should fail)
+# Note: Replace the UUID below with an actual ID from a created note
+PATCH http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{
+  "title": ""
+}
+
+###
+
+### Update note with invalid content (should fail)
+# Note: Replace the UUID below with an actual ID from a created note
+PATCH http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
+Content-Type: application/json
+
+{
+  "content": ""
+}
+
+###
+
+### Update note with invalid ID format (should fail)
+PATCH http://localhost:3000/api/notes/invalid-uuid
+Content-Type: application/json
+
+{
+  "title": "This should fail"
+}
+
+###
+
+### Update non-existent note (should return 404)
+PATCH http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440001
+Content-Type: application/json
+
+{
+  "title": "Non-existent Note Update"
+}
+
+###
+
+### Bulk delete notes (replace with actual IDs)
+# Note: Replace the UUIDs below with actual IDs from created notes
+POST http://localhost:3000/api/notes/bulk-delete
+Content-Type: application/json
+
+{
+  "ids": [
+    "550e8400-e29b-41d4-a716-446655440000",
+    "550e8400-e29b-41d4-a716-446655440002"
+  ]
+}
+
+###
+
+### Bulk delete with empty array
+POST http://localhost:3000/api/notes/bulk-delete
+Content-Type: application/json
+
+{
+  "ids": []
+}
+
+###
+
+### Bulk delete with invalid UUIDs (should handle gracefully)
+POST http://localhost:3000/api/notes/bulk-delete
+Content-Type: application/json
+
+{
+  "ids": [
+    "invalid-uuid-1",
+    "invalid-uuid-2"
+  ]
+}
+
+###
+
+### Bulk delete with non-existent UUIDs
+POST http://localhost:3000/api/notes/bulk-delete
+Content-Type: application/json
+
+{
+  "ids": [
+    "550e8400-e29b-41d4-a716-446655440099",
+    "550e8400-e29b-41d4-a716-446655440098"
+  ]
+}
+
+###
+
+### Delete note by ID (replace with actual ID)
+# Note: Replace the UUID below with an actual ID from a created note
+DELETE http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440000
+
+###
+
+### Delete note with invalid ID format (should fail)
+DELETE http://localhost:3000/api/notes/invalid-uuid-format
+
+###
+
+### Delete non-existent note (should return 404)
+DELETE http://localhost:3000/api/notes/550e8400-e29b-41d4-a716-446655440001
+
+###
+
+### Performance test - Search with special characters
+GET http://localhost:3000/api/notes/search?q=@#$%^&*()
+Accept: application/json
+
+###
+
+### Performance test - Search with very long query
+GET http://localhost:3000/api/notes/search?q=this is a very long search query that should still work properly and return relevant results if any exist in the database
+Accept: application/json
+
+###
+
+### Edge case - Date range with same start and end date
+GET http://localhost:3000/api/notes/date-range?startDate=2025-06-14&endDate=2025-06-14
+Accept: application/json
+
+###
+
+### Edge case - Date range with end date before start date
+GET http://localhost:3000/api/notes/date-range?startDate=2025-12-31&endDate=2025-01-01
+Accept: application/json
+
+###
+
+### Edge case - Recent notes with limit 0
+GET http://localhost:3000/api/notes/recent?limit=0
+Accept: application/json
+
+###
+
+### Edge case - Recent notes with very high limit
+GET http://localhost:3000/api/notes/recent?limit=1000
+Accept: application/json
+
+###
+
+### Test pagination-like behavior - Recent notes with limit 1
+GET http://localhost:3000/api/notes/recent?limit=1
+Accept: application/json
+
+###
+
+### Test case sensitivity in title search
+GET http://localhost:3000/api/notes/by-title?title=MEETING NOTES
+Accept: application/json
+
+###
+
+### Test case sensitivity in title search (lowercase)
+GET http://localhost:3000/api/notes/by-title?title=meeting notes
+Accept: application/json
+
+###
+
+### Test Unicode characters in note creation
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "title": "Unicode Test 🚀✨",
+  "content": "This note contains Unicode characters: 中文, العربية, русский, 日本語, emoji: 🎉🔥💻"
+}
+
+###
+
+### Test very long content
+POST http://localhost:3000/api/notes
+Content-Type: application/json
+
+{
+  "title": "Long Content Test",
+  "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
+}
+
+###
+
+### Final verification - Get all notes to see current state
+GET http://localhost:3000/api/notes
+Accept: application/json
+
+###
+
+### Final verification - Get notes count
+GET http://localhost:3000/api/notes/count
 Accept: application/json

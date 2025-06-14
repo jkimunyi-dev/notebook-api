@@ -2,5 +2,6 @@ export interface Note {
   id: string;
   title: string;
   content: string;
-  createdAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
